@@ -10,28 +10,42 @@ const App = () => {
   const [selectedPlan, setSelectedPlan] = useState(null)
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      <Header />
+    <>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;600;700&display=swap');
+        * { font-family: 'Lato', sans-serif; }
+        html, body { margin: 0; padding: 0; scroll-behavior: smooth; }
+      `}</style>
 
-      <main className="pt-24 px-4 sm:px-6 lg:px-8 space-y-10">
-        <UploadSection
-          onWallsDetected={setWalls}
-          onPlanSelected={setSelectedPlan}
-        />
+      <div className="min-h-screen w-full" style={{ backgroundColor: '#2c3531' }}>
+        <Header />
 
-        <ThreeDViewer walls={walls} />
+        <main className="pt-24 pb-16 space-y-6">
+          <UploadSection
+            onWallsDetected={setWalls}
+            onPlanSelected={setSelectedPlan}
+          />
 
-        <MaterialTable
-          walls={walls}
-          plan={selectedPlan}
-        />
+          <ThreeDViewer walls={walls} />
 
-        <Explanation
-          walls={walls}
-          plan={selectedPlan}
-        />
-      </main>
-    </div>
+          <MaterialTable
+            walls={walls}
+            plan={selectedPlan}
+          />
+
+          <Explanation
+            walls={walls}
+            plan={selectedPlan}
+          />
+        </main>
+
+        <footer className="border-t border-[#116466] py-6 text-center" style={{ backgroundColor: '#2c3531' }}>
+          <p className="text-xs uppercase tracking-widest text-[#d1e8e2] opacity-40">
+            Prompt Alchemists · 2025
+          </p>
+        </footer>
+      </div>
+    </>
   )
 }
 

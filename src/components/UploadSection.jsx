@@ -15,25 +15,16 @@ const UploadSection = ({ onWallsDetected, onPlanSelected }) => {
   const handleImageUpload = (e) => {
     const file = e.target.files[0]
     setUploadedImage(file)
-
-    // show preview
     const reader = new FileReader()
     reader.onload = () => setPreview(reader.result)
     reader.readAsDataURL(file)
   }
 
   const handleGenerate = async () => {
-    if (!selectedPlan) {
-      alert('Please select a plan type')
-      return
-    }
-    if (!uploadedImage) {
-      alert('Please upload a floor plan image')
-      return
-    }
+    if (!selectedPlan) return alert('Please select a plan type')
+    if (!uploadedImage) return alert('Please upload a floor plan image')
 
     setLoading(true)
-
     const formData = new FormData()
     formData.append('image', uploadedImage)
 
@@ -48,54 +39,116 @@ const UploadSection = ({ onWallsDetected, onPlanSelected }) => {
   }
 
   return (
-    <div id="upload" className="max-w-3xl mx-auto p-6 bg-white rounded-2xl shadow-lg mt-10">
-      <h2 className="text-3xl font-bold text-gray-800 mb-6">Upload Floor Plan</h2>
+    <>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;600;700&display=swap');
+        #upload { font-family: 'Lato', sans-serif; }
+        .upload-select option { background-color: #2c3531; color: #d1e8e2; }
+      `}</style>
 
-      {/* step 1 - select plan type */}
-      <h4 className="text-lg font-semibold text-gray-700 mb-2">Step 1 — Select Plan Type</h4>
-      <select
-        onChange={handlePlanChange}
-        value={selectedPlan}
-        className="w-full border border-gray-300 rounded-lg px-4 py-3 mb-6 focus:outline-none focus:ring-2 focus:ring-blue-500"
+      <div
+        id="upload"
+        className=" mt-24 mb-10 rounded-2xl overflow-hidden shadow-2xl"
+        style={{ backgroundColor: '#2c3531' }}
       >
-        <option value="">-- Select a Plan --</option>
-        <option value="planA">Plan A — 2 Bed / 1 Bath</option>
-        <option value="planB">Plan B — 4 Bed / 3 Bath</option>
-        <option value="planC">Plan C — 3 Bed / 2 Bath</option>
-      </select>
-
-      {/* step 2 - upload image */}
-      <h4 className="text-lg font-semibold text-gray-700 mb-2">Step 2 — Upload Floor Plan Image</h4>
-      <input
-        type="file"
-        accept="image/*"
-        onChange={handleImageUpload}
-        className="block w-full text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-blue-600 file:text-white file:cursor-pointer hover:file:bg-blue-700 mb-6"
-      />
-
-      {/* preview uploaded image */}
-      {preview && (
-        <div className="mb-6">
-          <p className="text-gray-700 font-medium mb-3">Preview:</p>
-          <img
-            src={preview}
-            alt="Uploaded floor plan"
-            width={400}
-            className="rounded-xl border border-gray-300 shadow-md max-w-full h-auto"
-          />
+        {/* Header */}
+        <div className="px-8 py-6 border-b border-[#116466]">
+          <h2 className="text-2xl font-bold tracking-wide text-[#ffcb9a]">
+            Upload Floor Plan
+          </h2>
+          <p className="text-sm text-[#d1e8e2] mt-1 font-normal">
+            Follow the steps below to generate your 3D model
+          </p>
         </div>
-      )}
 
-      {/* step 3 - generate */}
-      <h4 className="text-lg font-semibold text-gray-700 mb-2">Step 3 — Generate</h4>
-      <button
-        onClick={handleGenerate}
-        disabled={loading}
-        className="bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition disabled:bg-gray-400 disabled:cursor-not-allowed"
-      >
-        {loading ? 'Analyzing...' : 'Generate 3D Model'}
-      </button>
-    </div>
+        <div className="px-8 py-8 flex flex-col gap-8">
+
+          {/* Step 1 */}
+          <div>
+            <div className="flex items-center gap-3 mb-3">
+              <span className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold text-[#2c3531] bg-[#d9b08c]">
+                1
+              </span>
+              <h4 className="text-base font-semibold tracking-wide text-[#d1e8e2] uppercase">
+                Select Plan Type
+              </h4>
+            </div>
+            <select
+              onChange={handlePlanChange}
+              value={selectedPlan}
+              className="upload-select w-full rounded-lg px-4 py-3 text-sm font-medium text-[#d1e8e2] border border-[#116466] bg-[#116466]/20 focus:outline-none focus:ring-2 focus:ring-[#d9b08c] transition cursor-pointer"
+            >
+              <option value="">— Select a Plan —</option>
+              <option value="planA">Plan A — 2 Bed / 1 Bath</option>
+              <option value="planB">Plan B — 4 Bed / 3 Bath</option>
+              <option value="planC">Plan C — 3 Bed / 2 Bath</option>
+            </select>
+          </div>
+
+          {/* Step 2 */}
+          <div>
+            <div className="flex items-center gap-3 mb-3">
+              <span className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold text-[#2c3531] bg-[#d9b08c]">
+                2
+              </span>
+              <h4 className="text-base font-semibold tracking-wide text-[#d1e8e2] uppercase">
+                Upload Floor Plan Image
+              </h4>
+            </div>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleImageUpload}
+              className="block w-full text-sm text-[#d1e8e2]
+                file:mr-4 file:py-2 file:px-5
+                file:rounded-lg file:border-0
+                file:text-sm file:font-semibold
+                file:bg-[#116466] file:text-[#d1e8e2]
+                file:cursor-pointer
+                hover:file:bg-[#116466]/80
+                file:transition file:duration-200"
+            />
+
+            {preview && (
+              <div className="mt-5">
+                <p className="text-xs font-semibold uppercase tracking-widest text-[#d9b08c] mb-3">
+                  Preview
+                </p>
+                <img
+                  src={preview}
+                  alt="Uploaded floor plan"
+                  className="rounded-xl border border-[#116466] shadow-lg max-w-full h-auto"
+                  style={{ maxWidth: 400 }}
+                />
+              </div>
+            )}
+          </div>
+
+          {/* Step 3 */}
+          <div>
+            <div className="flex items-center gap-3 mb-3">
+              <span className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold text-[#2c3531] bg-[#d9b08c]">
+                3
+              </span>
+              <h4 className="text-base font-semibold tracking-wide text-[#d1e8e2] uppercase">
+                Generate
+              </h4>
+            </div>
+            <button
+              onClick={handleGenerate}
+              disabled={loading}
+              className="px-8 py-3 rounded-lg text-sm font-bold uppercase tracking-wider transition duration-200
+                bg-[#116466] text-[#d1e8e2]
+                hover:bg-[#d9b08c] hover:text-[#2c3531]
+                disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {loading ? 'Analyzing...' : 'Generate 3D Model'}
+            </button>
+          </div>
+
+        </div>
+      </div>
+    </>
   )
 }
 

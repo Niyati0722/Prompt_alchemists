@@ -1,9 +1,6 @@
 import materials from '../datas/materials.js'
 import plans from '../datas/Plans.js'
 
-// scoring formula
-// load bearing walls: strength matters more
-// partition walls: cost matters more
 const getScore = (material, isLoadBearing) => {
   if (isLoadBearing) {
     return (material.strengthScore * 0.6) +
@@ -16,7 +13,6 @@ const getScore = (material, isLoadBearing) => {
   }
 }
 
-// classify wall as load bearing or partition
 const isLoadBearing = (wall, allWalls) => {
   const allX = allWalls.flatMap(w => [w.x1, w.x2])
   const allY = allWalls.flatMap(w => [w.y1, w.y2])
@@ -25,30 +21,20 @@ const isLoadBearing = (wall, allWalls) => {
   const minY = Math.min(...allY)
   const maxY = Math.max(...allY)
 
-  // outer walls are load bearing
-  const isOuter = (
+  return (
     Math.abs(wall.x1 - minX) < 10 ||
     Math.abs(wall.x1 - maxX) < 10 ||
     Math.abs(wall.y1 - minY) < 10 ||
     Math.abs(wall.y1 - maxY) < 10
   )
-
-  return isOuter
 }
 
 const getTopMaterials = (wall, allWalls) => {
   const loadBearing = isLoadBearing(wall, allWalls)
-
-  // filter relevant materials
   const relevant = materials.filter(m => {
-    if (loadBearing) {
-      return m.type === 'loadbearing' || m.type === 'structural'
-    } else {
-      return m.type === 'partition' || m.type === 'general'
-    }
+    if (loadBearing) return m.type === 'loadbearing' || m.type === 'structural'
+    else return m.type === 'partition' || m.type === 'general'
   })
-
-  // score and sort
   return relevant
     .map(m => ({ ...m, score: getScore(m, loadBearing) }))
     .sort((a, b) => b.score - a.score)
@@ -63,79 +49,159 @@ const getWallLabel = (wall, index, allWalls) => {
   const minY = Math.min(...allY)
   const maxY = Math.max(...allY)
 
-  if (Math.abs(wall.y1 - minY) < 10) return 'Top outer wall'
-  if (Math.abs(wall.y1 - maxY) < 10) return 'Bottom outer wall'
-  if (Math.abs(wall.x1 - minX) < 10) return 'Left outer wall'
-  if (Math.abs(wall.x1 - maxX) < 10) return 'Right outer wall'
-  return `Inner wall ${index + 1}`
+  if (Math.abs(wall.y1 - minY) < 10) return 'Top Outer Wall'
+  if (Math.abs(wall.y1 - maxY) < 10) return 'Bottom Outer Wall'
+  if (Math.abs(wall.x1 - minX) < 10) return 'Left Outer Wall'
+  if (Math.abs(wall.x1 - maxX) < 10) return 'Right Outer Wall'
+  return `Inner Wall ${index + 1}`
 }
+
+const rankColors = ['#ffcb9a', '#d9b08c', '#d1e8e2']
 
 const MaterialTable = ({ walls, plan }) => {
   if (!walls || walls.length === 0) {
-    return <p className="text-center text-gray-600 text-lg mt-6">No walls detected yet</p>
+    return (
+      <>
+        <style>{`@import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;600;700&display=swap');`}</style>
+        <div
+          id="materials"
+          className="max-w-6xl mx-auto mt-10 mb-10 rounded-2xl flex items-center justify-center py-16"
+          style={{ backgroundColor: '#2c3531', fontFamily: "'Lato', sans-serif" }}
+        >
+          <p className="text-sm font-semibold uppercase tracking-widest text-[#d1e8e2] opacity-60">
+            No walls detected yet
+          </p>
+        </div>
+      </>
+    )
   }
 
   const rooms = plan ? plans[plan]?.rooms : []
 
   return (
-    <div id="materials" className="max-w-6xl mx-auto mt-10 p-6 bg-white rounded-2xl shadow-lg">
-      <h2 className="text-3xl font-bold text-gray-800 mb-8">Material Recommendations</h2>
+    <>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;600;700&display=swap');
+        #materials { font-family: 'Lato', sans-serif; }
+        .mat-row:hover td { background-color: rgba(17, 100, 102, 0.15); }
+      `}</style>
 
-      {walls.map((wall, index) => {
-        const loadBearing = isLoadBearing(wall, walls)
-        const topMaterials = getTopMaterials(wall, walls)
-        const label = getWallLabel(wall, index, walls)
-
-        return (
-          <div key={index} className="mb-8 p-5 border border-gray-200 rounded-xl shadow-sm">
-            <h4 className="text-xl font-semibold text-gray-800 mb-4">
-              {label} —
-              {loadBearing ? ' Load Bearing' : ' Partition'}
-            </h4>
-
-            <div className="overflow-x-auto">
-              <table className="min-w-full border border-gray-300 text-sm text-left">
-                <thead className="bg-gray-100 text-gray-700">
-                  <tr>
-                    <th className="border border-gray-300 px-4 py-2">Rank</th>
-                    <th className="border border-gray-300 px-4 py-2">Material</th>
-                    <th className="border border-gray-300 px-4 py-2">Cost</th>
-                    <th className="border border-gray-300 px-4 py-2">Strength</th>
-                    <th className="border border-gray-300 px-4 py-2">Durability</th>
-                    <th className="border border-gray-300 px-4 py-2">Score</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {topMaterials.map((m, i) => (
-                    <tr key={i} className="hover:bg-gray-50">
-                      <td className="border border-gray-300 px-4 py-2">{i + 1}</td>
-                      <td className="border border-gray-300 px-4 py-2">{m.name}</td>
-                      <td className="border border-gray-300 px-4 py-2">{m.cost}</td>
-                      <td className="border border-gray-300 px-4 py-2">{m.strength}</td>
-                      <td className="border border-gray-300 px-4 py-2">{m.durability}</td>
-                      <td className="border border-gray-300 px-4 py-2">{m.score.toFixed(2)}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        )
-      })}
-
-      {rooms && rooms.length > 0 && (
-        <div className="mt-10 p-5 bg-gray-50 rounded-xl border border-gray-200">
-          <h3 className="text-2xl font-semibold text-gray-800 mb-4">Rooms in this plan</h3>
-          <ul className="list-disc list-inside space-y-2 text-gray-700">
-            {rooms.map((room, i) => (
-              <li key={i}>
-                {room.name} — {room.type}
-              </li>
-            ))}
-          </ul>
+      <div
+        id="materials"
+        className="max-w-6xl mx-auto mt-10 mb-10 rounded-2xl overflow-hidden shadow-2xl"
+        style={{ backgroundColor: '#2c3531' }}
+      >
+        {/* Header */}
+        <div className="px-8 py-6 border-b border-[#116466]">
+          <h2 className="text-2xl font-bold tracking-wide text-[#ffcb9a]">
+            Material Recommendations
+          </h2>
+          <p className="text-sm text-[#d1e8e2] mt-1">
+            Top 3 materials ranked by suitability for each wall type
+          </p>
         </div>
-      )}
-    </div>
+
+        <div className="px-8 py-8 flex flex-col gap-8">
+
+          {walls.map((wall, index) => {
+            const loadBearing = isLoadBearing(wall, walls)
+            const topMaterials = getTopMaterials(wall, walls)
+            const label = getWallLabel(wall, index, walls)
+
+            return (
+              <div
+                key={index}
+                className="rounded-xl overflow-hidden border border-[#116466]"
+              >
+                {/* Wall sub-header */}
+                <div className="flex items-center gap-3 px-5 py-4 border-b border-[#116466]"
+                  style={{ backgroundColor: 'rgba(17,100,102,0.2)' }}
+                >
+                  <span
+                    className="text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full"
+                    style={{
+                      backgroundColor: loadBearing ? '#116466' : 'rgba(17,100,102,0.3)',
+                      color: loadBearing ? '#ffcb9a' : '#d1e8e2'
+                    }}
+                  >
+                    {loadBearing ? 'Load Bearing' : 'Partition'}
+                  </span>
+                  <h4 className="text-base font-semibold text-[#d1e8e2]">
+                    {label}
+                  </h4>
+                </div>
+
+                {/* Table */}
+                <div className="overflow-x-auto">
+                  <table className="min-w-full text-sm text-left">
+                    <thead>
+                      <tr style={{ backgroundColor: 'rgba(17,100,102,0.15)' }}>
+                        {['Rank', 'Material', 'Cost', 'Strength', 'Durability', 'Score'].map(col => (
+                          <th
+                            key={col}
+                            className="px-5 py-3 text-xs font-bold uppercase tracking-widest border-b border-[#116466]"
+                            style={{ color: '#d9b08c' }}
+                          >
+                            {col}
+                          </th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {topMaterials.map((m, i) => (
+                        <tr key={i} className="mat-row border-b border-[#116466]/40 last:border-0 transition-colors duration-150">
+                          <td className="px-5 py-3">
+                            <span
+                              className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold text-[#2c3531]"
+                              style={{ backgroundColor: rankColors[i] }}
+                            >
+                              {i + 1}
+                            </span>
+                          </td>
+                          <td className="px-5 py-3 font-semibold text-[#ffcb9a]">{m.name}</td>
+                          <td className="px-5 py-3 text-[#d1e8e2]">{m.cost}</td>
+                          <td className="px-5 py-3 text-[#d1e8e2]">{m.strength}</td>
+                          <td className="px-5 py-3 text-[#d1e8e2]">{m.durability}</td>
+                          <td className="px-5 py-3 font-bold text-[#d9b08c]">{m.score.toFixed(2)}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )
+          })}
+
+          {/* Rooms section */}
+          {rooms && rooms.length > 0 && (
+            <div className="rounded-xl border border-[#116466] overflow-hidden">
+              <div
+                className="px-5 py-4 border-b border-[#116466]"
+                style={{ backgroundColor: 'rgba(17,100,102,0.2)' }}
+              >
+                <h3 className="text-base font-semibold tracking-wide text-[#ffcb9a]">
+                  Rooms in this Plan
+                </h3>
+              </div>
+              <div className="px-5 py-4 flex flex-col gap-2">
+                {rooms.map((room, i) => (
+                  <div key={i} className="flex items-center gap-3">
+                    <span className="w-2 h-2 rounded-full bg-[#d9b08c]" />
+                    <span className="text-sm text-[#d1e8e2]">
+                      {room.name}
+                      <span className="text-[#d9b08c] ml-2 text-xs font-semibold uppercase tracking-wider">
+                        {room.type}
+                      </span>
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+        </div>
+      </div>
+    </>
   )
 }
 

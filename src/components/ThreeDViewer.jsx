@@ -14,17 +14,29 @@ const Wall = ({ x1, y1, x2, y2 }) => {
       rotation={[0, -angle, 0]}
     >
       <boxGeometry args={[length * scale, 3, 0.2]} />
-      <meshStandardMaterial color="#555555" />
+      <meshStandardMaterial color="#116466" />
     </mesh>
   )
 }
 
 const ThreeDViewer = ({ walls }) => {
   if (!walls || walls.length === 0) {
-    return <p className="text-center text-gray-600 text-lg mt-6">No walls to display yet</p>
+    return (
+      <>
+        <style>{`@import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;600;700&display=swap');`}</style>
+        <div
+          id="threedmodel"
+          className="w-full flex items-center justify-center py-16"
+          style={{ backgroundColor: '#2c3531', fontFamily: "'Lato', sans-serif" }}
+        >
+          <p className="text-sm font-semibold uppercase tracking-widest text-[#d1e8e2] opacity-60">
+            No walls to display yet
+          </p>
+        </div>
+      </>
+    )
   }
 
-  // find center of all walls
   const allX = walls.flatMap(w => [w.x1, w.x2])
   const allY = walls.flatMap(w => [w.y1, w.y2])
   const minX = Math.min(...allX)
@@ -34,42 +46,60 @@ const ThreeDViewer = ({ walls }) => {
   const centerX = (minX + maxX) / 2
   const centerY = (minY + maxY) / 2
 
-  // floor size based on actual plan size
   const scale = 0.05
   const floorW = (maxX - minX) * scale + 2
   const floorH = (maxY - minY) * scale + 2
 
   return (
-    <div id="threedmodel" className="max-w-6xl mx-auto mt-10 p-6 bg-white rounded-2xl shadow-lg">
-      <h2 className="text-3xl font-bold text-gray-800 mb-4">3D Model</h2>
-      <div className="h-125 w-full rounded-xl overflow-hidden border border-gray-200">
-        <Canvas camera={{ position: [10, 15, 20], fov: 60 }}>
-          <ambientLight intensity={0.5} />
-          <directionalLight position={[10, 10, 5]} intensity={1} />
+    <>
+      <style>{`@import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;600;700&display=swap');`}</style>
 
-          {/* floor centered properly */}
-          <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]}>
-            <planeGeometry args={[floorW, floorH]} />
-            <meshStandardMaterial color="lightyellow" />
-          </mesh>
+      <div
+        id="threedmodel"
+        className="w-full overflow-hidden"
+        style={{ backgroundColor: '#2c3531', fontFamily: "'Lato', sans-serif" }}
+      >
+        {/* Header */}
+        <div className="px-8 py-6 border-b border-[#116466]">
+          <h2 className="text-2xl font-bold tracking-wide text-[#ffcb9a]">
+            3D Model
+          </h2>
+          <p className="text-sm text-[#d1e8e2] mt-1 font-normal">
+            Orbit, zoom, and pan to inspect your floor plan
+          </p>
+        </div>
 
-          {/* walls centered using offset */}
-          <group position={[-centerX * scale, 0, -centerY * scale]}>
-            {walls.map((wall, index) => (
-              <Wall
-                key={index}
-                x1={wall.x1}
-                y1={wall.y1}
-                x2={wall.x2}
-                y2={wall.y2}
-              />
-            ))}
-          </group>
+        {/* Canvas */}
+        <div className="px-8 py-6">
+          <div
+            className="w-full overflow-hidden border border-[#116466]"
+            style={{ height: '500px' }}
+          >
+            <Canvas camera={{ position: [10, 15, 20], fov: 60 }}>
+              <ambientLight intensity={0.5} />
+              <directionalLight position={[10, 10, 5]} intensity={1} />
 
-          <OrbitControls />
-        </Canvas>
+              <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]}>
+                <planeGeometry args={[floorW, floorH]} />
+                <meshStandardMaterial color="#d1e8e2" />
+              </mesh>
+
+              <group position={[-centerX * scale, 0, -centerY * scale]}>
+                {walls.map((wall, index) => (
+                  <Wall key={index} x1={wall.x1} y1={wall.y1} x2={wall.x2} y2={wall.y2} />
+                ))}
+              </group>
+
+              <OrbitControls />
+            </Canvas>
+          </div>
+
+          <p className="mt-3 text-xs font-semibold uppercase tracking-widest text-[#d9b08c] text-right">
+            Left drag · Scroll zoom · Right drag pan
+          </p>
+        </div>
       </div>
-    </div>
+    </>
   )
 }
 
