@@ -10,26 +10,28 @@ const App = () => {
   const [selectedPlan, setSelectedPlan] = useState(null)
 
   return (
-    <>
+    <div className="min-h-screen bg-gray-100">
       <Header />
 
-      <UploadSection
-        onWallsDetected={setWalls}
-        onPlanSelected={setSelectedPlan}
-      />
+      <main className="pt-24 px-4 sm:px-6 lg:px-8 space-y-10">
+        <UploadSection
+          onWallsDetected={setWalls}
+          onPlanSelected={setSelectedPlan}
+        />
 
-      <ThreeDViewer walls={walls} />
+        <ThreeDViewer walls={walls} />
 
-      <MaterialTable
-        walls={walls}
-        plan={selectedPlan}
-      />
+        <MaterialTable
+          walls={walls}
+          plan={selectedPlan}
+        />
 
-      <Explanation
-        walls={walls}
-        plan={selectedPlan}
-      />
-    </>
+        <Explanation
+          walls={walls}
+          plan={selectedPlan}
+        />
+      </main>
+    </div>
   )
 }
 

@@ -21,7 +21,7 @@ const Wall = ({ x1, y1, x2, y2 }) => {
 
 const ThreeDViewer = ({ walls }) => {
   if (!walls || walls.length === 0) {
-    return <p>No walls to display yet</p>
+    return <p className="text-center text-gray-600 text-lg mt-6">No walls to display yet</p>
   }
 
   // find center of all walls
@@ -40,33 +40,35 @@ const ThreeDViewer = ({ walls }) => {
   const floorH = (maxY - minY) * scale + 2
 
   return (
-    <div id="threedmodel" style={{ height: '500px' }}>
-      <h2>3D Model</h2>
-      <Canvas camera={{ position: [10, 15, 20], fov: 60 }}>
-        <ambientLight intensity={0.5} />
-        <directionalLight position={[10, 10, 5]} intensity={1} />
+    <div id="threedmodel" className="max-w-6xl mx-auto mt-10 p-6 bg-white rounded-2xl shadow-lg">
+      <h2 className="text-3xl font-bold text-gray-800 mb-4">3D Model</h2>
+      <div className="h-125 w-full rounded-xl overflow-hidden border border-gray-200">
+        <Canvas camera={{ position: [10, 15, 20], fov: 60 }}>
+          <ambientLight intensity={0.5} />
+          <directionalLight position={[10, 10, 5]} intensity={1} />
 
-        {/* floor centered properly */}
-        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]}>
-          <planeGeometry args={[floorW, floorH]} />
-          <meshStandardMaterial color="lightyellow" />
-        </mesh>
+          {/* floor centered properly */}
+          <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]}>
+            <planeGeometry args={[floorW, floorH]} />
+            <meshStandardMaterial color="lightyellow" />
+          </mesh>
 
-        {/* walls centered using offset */}
-        <group position={[-centerX * scale, 0, -centerY * scale]}>
-          {walls.map((wall, index) => (
-            <Wall
-              key={index}
-              x1={wall.x1}
-              y1={wall.y1}
-              x2={wall.x2}
-              y2={wall.y2}
-            />
-          ))}
-        </group>
+          {/* walls centered using offset */}
+          <group position={[-centerX * scale, 0, -centerY * scale]}>
+            {walls.map((wall, index) => (
+              <Wall
+                key={index}
+                x1={wall.x1}
+                y1={wall.y1}
+                x2={wall.x2}
+                y2={wall.y2}
+              />
+            ))}
+          </group>
 
-        <OrbitControls />
-      </Canvas>
+          <OrbitControls />
+        </Canvas>
+      </div>
     </div>
   )
 }

@@ -2,8 +2,7 @@ import express from 'express'
 import multer from 'multer'
 import cors from 'cors'
 import { exec } from 'child_process'
-import { fileURLToPath } from 'url'
-import path from 'path'
+import fs from 'fs'
 
 const app = express()
 app.use(cors())
@@ -16,10 +15,16 @@ app.post('/parse', upload.single('image'), (req, res) => {
   exec(`python src/python/parse.py ${imagePath}`, (error, stdout) => {
     if (error) {
       console.error(error)
+      fs.unlink(imagePath, () => {})
       res.status(500).json({ error: 'Python script failed' })
       return
     }
+
+    // send response first
     res.json(JSON.parse(stdout))
+
+    // delete file after response is sent
+    fs.unlink(imagePath, () => {})
   })
 })
 
