@@ -163,7 +163,7 @@ const App = () => {
           </>
         )}
 
-        <ThreeDViewer walls={walls} />
+        <ThreeDViewer walls={walls} plan={selectedPlan} />
         <MaterialTable walls={walls} plan={selectedPlan} />
         <Explanation walls={walls} plan={selectedPlan} />
 

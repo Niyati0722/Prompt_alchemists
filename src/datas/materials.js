@@ -1,4 +1,5 @@
 const materials = [
+  // Your existing entries...
   {
     name: "AAC Blocks",
     cost: "Low",
@@ -74,6 +75,84 @@ const materials = [
     durability: "Very High",
     durabilityScore: 4,
     bestUse: "Structural walls, slabs",
+    type: "structural"
+  },
+  // New additions
+  {
+    name: "Cross-Laminated Timber (CLT)",
+    cost: "High",
+    costScore: 3,
+    strength: "High",
+    strengthScore: 3,
+    durability: "High",
+    durabilityScore: 3,
+    bestUse: "Walls, floors, roofs",
+    type: "structural"
+  },
+  {
+    name: "Structural Insulated Panel (SIP)",
+    cost: "Medium",
+    costScore: 2,
+    strength: "Medium-High",
+    strengthScore: 2.5,
+    durability: "High",
+    durabilityScore: 3,
+    bestUse: "Exterior walls, roofs",
+    type: "structural"
+  },
+  {
+    name: "Metal Sandwich Panel",
+    cost: "Medium",
+    costScore: 2,
+    strength: "Medium",
+    strengthScore: 2,
+    durability: "Medium",
+    durabilityScore: 2,
+    bestUse: "Warehouses, facades",
+    type: "enclosure"
+  },
+  {
+    name: "Insulated Concrete Form (ICF)",
+    cost: "Med-High",
+    costScore: 2.5,
+    strength: "Very High",
+    strengthScore: 4,
+    durability: "Very High",
+    durabilityScore: 4,
+    bestUse: "Foundations, load-bearing walls",
+    type: "structural"
+  },
+  {
+    name: "Glass Fiber Reinforced Concrete (GFRC)",
+    cost: "High",
+    costScore: 3,
+    strength: "Medium-High",
+    strengthScore: 2.5,
+    durability: "Very High",
+    durabilityScore: 4,
+    bestUse: "Facade panels, cladding",
+    type: "cladding"
+  },
+  {
+    name: "Hempcrete",
+    cost: "Med-High",
+    costScore: 2.5,
+    strength: "Low",
+    strengthScore: 1,
+    durability: "High",
+    durabilityScore: 3,
+    bestUse: "Insulating infill, renovation",
+    type: "insulation"
+  },
+  {
+    name: "Engineered Wood (Glulam, LVL)",
+    cost: "Medium",
+    costScore: 2,
+    strength: "High",
+    strengthScore: 3,
+    durability: "High",
+    durabilityScore: 3,
+    bestUse: "Beams, headers, framing",
     type: "structural"
   }
 ]
