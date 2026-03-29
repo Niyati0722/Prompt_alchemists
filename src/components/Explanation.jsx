@@ -2,17 +2,15 @@ import { useState, useEffect, useRef } from 'react'
 import materials from '../datas/materials.js'
 import plans from '../datas/Plans.js'
 
-// ─── Scoring logic ────────────────────────────────────────────────────────────
+/* ═══════════════════════════════════════════════
+   Scoring / context logic — UNCHANGED
+═══════════════════════════════════════════════ */
 
 const getScore = (material, isLoadBearing) => {
   if (isLoadBearing) {
-    return (material.strengthScore * 0.6) +
-           (material.durabilityScore * 0.3) -
-           (material.costScore * 0.1)
+    return (material.strengthScore * 0.6) + (material.durabilityScore * 0.3) - (material.costScore * 0.1)
   } else {
-    return (material.durabilityScore * 0.4) +
-           (material.strengthScore * 0.2) -
-           (material.costScore * 0.4)
+    return (material.durabilityScore * 0.4) + (material.strengthScore * 0.2) - (material.costScore * 0.4)
   }
 }
 
@@ -22,26 +20,22 @@ const classifyWall = (wall, allWalls) => {
   const minX = Math.min(...allX), maxX = Math.max(...allX)
   const minY = Math.min(...allY), maxY = Math.max(...allY)
   return (
-    Math.abs(wall.x1 - minX) < 10 ||
-    Math.abs(wall.x1 - maxX) < 10 ||
-    Math.abs(wall.y1 - minY) < 10 ||
-    Math.abs(wall.y1 - maxY) < 10
+    Math.abs(wall.x1 - minX) < 10 || Math.abs(wall.x1 - maxX) < 10 ||
+    Math.abs(wall.y1 - minY) < 10 || Math.abs(wall.y1 - maxY) < 10
   )
 }
 
 const getTopMaterials = (wall, allWalls) => {
   const lb = classifyWall(wall, allWalls)
   return materials
-    .filter(m => lb
-      ? m.type === 'loadbearing' || m.type === 'structural'
-      : m.type === 'partition' || m.type === 'general')
+    .filter(m => lb ? m.type === 'loadbearing' || m.type === 'structural'
+                    : m.type === 'partition'   || m.type === 'general')
     .map(m => ({ ...m, score: getScore(m, lb) }))
     .sort((a, b) => b.score - a.score)
     .slice(0, 3)
 }
 
-const getWallLength = (w) =>
-  Math.round(Math.sqrt((w.x2 - w.x1) ** 2 + (w.y2 - w.y1) ** 2))
+const getWallLength = (w) => Math.round(Math.sqrt((w.x2 - w.x1) ** 2 + (w.y2 - w.y1) ** 2))
 
 const getWallLabel = (wall, index, allWalls) => {
   const allX = allWalls.flatMap(w => [w.x1, w.x2])
@@ -63,12 +57,9 @@ const buildAnalysisContext = (walls, plan) => {
     const length = getWallLength(wall)
     const top = getTopMaterials(wall, walls)
     return {
-      label,
-      type: lb ? 'Load-Bearing' : 'Partition',
-      lengthPx: length,
-      isLongSpan: length > 150,
-      topMaterial: top[0]?.name,
-      topScore: top[0]?.score?.toFixed(2),
+      label, type: lb ? 'Load-Bearing' : 'Partition',
+      lengthPx: length, isLongSpan: length > 150,
+      topMaterial: top[0]?.name, topScore: top[0]?.score?.toFixed(2),
       alternatives: top.slice(1).map(m => m.name).join(', '),
     }
   })
@@ -79,7 +70,9 @@ const buildAnalysisContext = (walls, plan) => {
   return { wallSummaries, loadBearingCount, partitionCount, longSpans, rooms, planName: planData?.name || 'Unknown Plan' }
 }
 
-// ─── Groq API ─────────────────────────────────────────────────────────────────
+/* ═══════════════════════════════════════════════
+   Groq API — UNCHANGED
+═══════════════════════════════════════════════ */
 
 const callGroqAPI = async (context) => {
   const { wallSummaries, loadBearingCount, partitionCount, longSpans, rooms, planName } = context
@@ -132,30 +125,16 @@ Respond ONLY with a JSON object (no markdown, no backticks) with this exact stru
   return JSON.parse(raw.replace(/```json|```/g, '').trim())
 }
 
-// ─── Sub-components ───────────────────────────────────────────────────────────
+/* ═══════════════════════════════════════════════
+   UI Sub-components
+═══════════════════════════════════════════════ */
 
-const Badge = ({ children, type }) => {
-  const styles = {
-    lb:       'bg-[#116466]/20 text-[#ffcb9a] border-[#116466]',
-    partition:'bg-[#116466]/10 text-[#d1e8e2] border-[#116466]/50',
-    material: 'bg-[#d9b08c]/20 text-[#d9b08c] border-[#d9b08c]/40',
-  }
-  return (
-    <span className={`inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-widest uppercase border ${styles[type] || styles.partition}`}>
-      {children}
-    </span>
-  )
-}
-
-const StatCard = ({ label, value, accent }) => (
-  <div
-    className="flex-1 min-w-28 rounded-xl px-4 py-3 border border-[#116466]"
-    style={{ backgroundColor: 'rgba(17,100,102,0.15)' }}
-  >
-    <div className="text-2xl font-extrabold leading-none" style={{ color: accent }}>
+const StatCard = ({ label, value, accent = 'var(--gold)' }) => (
+  <div className="stat-card" style={{ minWidth: 100 }}>
+    <div style={{ fontSize: 26, fontWeight: 800, color: accent, fontFamily: 'Outfit, sans-serif', lineHeight: 1 }}>
       {value}
     </div>
-    <div className="mt-1 text-[10px] uppercase tracking-widest text-[#d1e8e2] opacity-70">
+    <div style={{ fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--text-muted)', marginTop: 4, fontFamily: 'Outfit, sans-serif' }}>
       {label}
     </div>
   </div>
@@ -163,67 +142,58 @@ const StatCard = ({ label, value, accent }) => (
 
 const Spinner = () => (
   <div className="flex flex-col items-center gap-4 py-12">
-    <div className="w-10 h-10 rounded-full border-4 border-[#116466] border-t-[#ffcb9a] animate-spin" />
-    <p className="text-xs uppercase tracking-widest text-[#d1e8e2] opacity-60">
+    <div className="animate-spin" style={{
+      width: 36, height: 36, borderRadius: '50%',
+      border: '3px solid rgba(17,100,102,0.2)',
+      borderTopColor: 'var(--cyan)',
+    }} />
+    <p style={{ fontSize: 11, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--text-muted)', fontFamily: 'Outfit, sans-serif' }}>
       Analysing structural data…
     </p>
   </div>
 )
 
-const SectionCard = ({ children, className = '' }) => (
-  <div
-    className={`rounded-xl border border-[#116466] overflow-hidden ${className}`}
-    style={{ backgroundColor: 'rgba(17,100,102,0.1)' }}
-  >
+const Block = ({ title, icon, color = 'var(--gold-dim)', children }) => (
+  <div className="card-inset overflow-hidden">
+    <div className="flex items-center gap-2 px-5 py-3" style={{ borderBottom: '1px solid var(--border)', background: 'rgba(17,100,102,0.06)' }}>
+      <span style={{ color: color }}>{icon}</span>
+      <span style={{ fontSize: 10, fontFamily: 'Outfit, sans-serif', fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase', color: color }}>
+        {title}
+      </span>
+    </div>
     {children}
   </div>
 )
 
-const SectionTitle = ({ icon, children, color = '#d9b08c' }) => (
-  <div
-    className="flex items-center gap-2 px-5 py-3 border-b border-[#116466] text-[10px] font-bold uppercase tracking-widest"
-    style={{ color, backgroundColor: 'rgba(17,100,102,0.2)' }}
-  >
-    {icon}
-    {children}
-  </div>
-)
+const CopyButton = ({ text }) => {
+  const [copied, setCopied] = useState(false)
+  const copy = () => {
+    navigator.clipboard.writeText(text).then(() => {
+      setCopied(true); setTimeout(() => setCopied(false), 2000)
+    })
+  }
+  return (
+    <button onClick={copy} className="btn-ghost px-3 py-1.5 rounded-lg text-xs flex items-center gap-1.5">
+      {copied ? (
+        <>
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--teal-light)" strokeWidth="3"><polyline points="20 6 9 17 4 12"/></svg>
+          Copied!
+        </>
+      ) : (
+        <>
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>
+          </svg>
+          Copy
+        </>
+      )}
+    </button>
+  )
+}
 
-// ─── Icons ────────────────────────────────────────────────────────────────────
-
-const IconInfo = () => (
-  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
-  </svg>
-)
-const IconWall = () => (
-  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/>
-  </svg>
-)
-const IconWarn = () => (
-  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
-    <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
-  </svg>
-)
-const IconCheck = () => (
-  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <polyline points="20 6 9 17 4 12"/>
-  </svg>
-)
-const IconStar = () => (
-  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
-  </svg>
-)
-const IconHome = () => (
-  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
-  </svg>
-)
-
-// ─── Main Component ───────────────────────────────────────────────────────────
+/* ═══════════════════════════════════════════════
+   Main Component
+═══════════════════════════════════════════════ */
 
 const Explanation = ({ walls, plan }) => {
   const [result, setResult]   = useState(null)
@@ -245,186 +215,233 @@ const Explanation = ({ walls, plan }) => {
 
   const context = walls && walls.length > 0 ? buildAnalysisContext(walls, plan) : null
 
-  // ── Empty state ──
+  /* ── Empty state ── */
   if (!walls || walls.length === 0) {
     return (
-      <>
-        <style>{`@import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;600;700&display=swap');`}</style>
-        <section
-          id="explanation"
-          className="max-w-6xl mx-auto mt-10 mb-10 rounded-2xl overflow-hidden shadow-2xl"
-          style={{ backgroundColor: '#2c3531', fontFamily: "'Lato', sans-serif" }}
-        >
-          <div className="px-8 py-6 border-b border-[#116466]">
-            <p className="text-[10px] font-bold uppercase tracking-widest text-[#d9b08c] mb-1">Stage 05</p>
-            <h2 className="text-2xl font-bold tracking-wide text-[#ffcb9a]">Structural Explainability</h2>
-            <p className="text-sm text-[#d1e8e2] mt-1">Upload a floor plan to generate an AI-powered structural analysis.</p>
-          </div>
-          <div className="px-8 py-16 flex flex-col items-center gap-3">
-            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#116466" strokeWidth="1.5">
-              <path d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18"/>
+      <section id="explanation" className="glass rounded-2xl overflow-hidden mb-6">
+        <div className="px-8 py-5 flex items-center gap-4" style={{ borderBottom: '1px solid var(--border)' }}>
+          <div className="w-9 h-9 rounded-xl flex items-center justify-center"
+            style={{ background: 'rgba(17,100,102,0.15)', border: '1px solid rgba(17,100,102,0.3)' }}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--teal-light)" strokeWidth="2">
+              <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
             </svg>
-            <p className="text-xs uppercase tracking-widest text-[#d1e8e2] opacity-40">No floor plan loaded</p>
           </div>
-        </section>
-      </>
+          <div>
+            <div className="section-label">Step 4</div>
+            <h2 style={{ fontFamily: 'Outfit, sans-serif', fontWeight: 700, fontSize: 20, color: 'var(--gold)', margin: 0 }}>
+              Structural Analysis
+            </h2>
+          </div>
+        </div>
+        <div className="flex flex-col items-center justify-center py-14 gap-3">
+          <div style={{ fontSize: 28, color: 'var(--text-dim)' }}>◉</div>
+          <p style={{ fontSize: 12, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--text-dim)', fontFamily: 'Outfit, sans-serif' }}>
+            AI analysis will appear after generation
+          </p>
+        </div>
+      </section>
     )
   }
 
+  /* ── Full result ── */
+  const fullText = result ? [
+    result.summary,
+    ...(result.wallExplanations || []).map(w => `${w.label}: ${w.why} ${w.tradeoff}`),
+    ...(result.structuralConcerns || []),
+    result.overallRecommendation,
+  ].join('\n\n') : ''
+
   return (
-    <>
-      <style>{`@import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;600;700&display=swap');`}</style>
-
-      <section
-        id="explanation"
-        className="max-w-6xl mx-auto mt-10 mb-10 rounded-2xl overflow-hidden shadow-2xl"
-        style={{ backgroundColor: '#2c3531', fontFamily: "'Lato', sans-serif" }}
-      >
-        {/* Header */}
-        <div className="px-8 py-6 border-b border-[#116466]">
-          <p className="text-[10px] font-bold uppercase tracking-widest text-[#d9b08c] mb-1">Stage 05 · AI Analysis</p>
-          <h2 className="text-2xl font-bold tracking-wide text-[#ffcb9a]">Structural Explainability</h2>
-          <p className="text-sm text-[#d1e8e2] mt-1">Plain-language explanations of every structural decision — generated by AI.</p>
+    <section id="explanation" className="glass rounded-2xl overflow-hidden mb-6 animate-fadeIn">
+      {/* Header */}
+      <div className="px-8 py-5 flex items-center justify-between" style={{ borderBottom: '1px solid var(--border)' }}>
+        <div className="flex items-center gap-4">
+          <div className="w-9 h-9 rounded-xl flex items-center justify-center"
+            style={{ background: 'rgba(17,100,102,0.2)', border: '1px solid rgba(17,100,102,0.4)' }}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" strokeWidth="2">
+              <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
+          </div>
+          <div>
+            <div className="section-label">Step 4 · AI Analysis</div>
+            <h2 style={{ fontFamily: 'Outfit, sans-serif', fontWeight: 700, fontSize: 20, color: 'var(--gold)', margin: 0 }}>
+              Structural Explainability
+            </h2>
+          </div>
         </div>
+        <div className="flex items-center gap-3">
+          {result && <CopyButton text={fullText} />}
+          <span style={{ fontSize: 10, color: 'var(--text-muted)', fontFamily: 'DM Mono, monospace' }}>
+            LLaMA 3.3 70B
+          </span>
+        </div>
+      </div>
 
-        <div className="px-8 py-8 flex flex-col gap-6">
+      <div className="px-8 py-8 flex flex-col gap-5">
 
-          {/* Stats row */}
-          {context && (
-            <div className="flex flex-wrap gap-3">
-              <StatCard label="Walls Detected"  value={context.wallSummaries.length}  accent="#ffcb9a" />
-              <StatCard label="Load-Bearing"    value={context.loadBearingCount}       accent="#d9b08c" />
-              <StatCard label="Partition"       value={context.partitionCount}         accent="#d1e8e2" />
-              <StatCard label="Long Spans"      value={context.longSpans.length}
-                accent={context.longSpans.length > 0 ? '#ffcb9a' : '#d1e8e2'} />
-              {plan && (
-                <StatCard label="Plan"
-                  value={plans[plan]?.name?.split('—')[0]?.trim() || plan}
-                  accent="#d9b08c" />
-              )}
+        {/* Stats row */}
+        {context && (
+          <div className="flex flex-wrap gap-3">
+            <StatCard label="Walls Detected"  value={context.wallSummaries.length} accent="var(--gold)" />
+            <StatCard label="Load-Bearing"    value={context.loadBearingCount}      accent="#fb923c" />
+            <StatCard label="Partition"       value={context.partitionCount}        accent="var(--text-muted)" />
+            <StatCard label="Long Spans"      value={context.longSpans.length}      accent={context.longSpans.length > 0 ? '#fb923c' : 'var(--text-muted)'} />
+            {plan && (
+              <StatCard
+                label="Plan"
+                value={plans[plan]?.name?.split('—')[0]?.trim() || plan}
+                accent="var(--gold-dim)"
+              />
+            )}
+          </div>
+        )}
+
+        {/* Loading */}
+        {loading && <Spinner />}
+
+        {/* Error */}
+        {error && (
+          <Block title="Analysis Failed" icon={
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+              <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+            </svg>
+          } color="#fb923c">
+            <div className="px-5 py-4">
+              <p style={{ fontSize: 13, color: 'var(--text)' }}>
+                <span style={{ color: '#fb923c', fontWeight: 600 }}>Error: </span>
+                <code style={{ fontFamily: 'DM Mono, monospace', fontSize: 12 }}>{error}</code>
+              </p>
+              <p style={{ marginTop: 8, fontSize: 12, color: 'var(--text-muted)' }}>
+                Ensure <code style={{ color: 'var(--gold)', fontFamily: 'DM Mono, monospace' }}>VITE_GROQ_API_KEY</code> is set in your{' '}
+                <code style={{ color: 'var(--gold)', fontFamily: 'DM Mono, monospace' }}>.env</code> file.
+              </p>
             </div>
-          )}
+          </Block>
+        )}
 
-          {/* Loading */}
-          {loading && <Spinner />}
+        {/* Result */}
+        {result && (
+          <>
+            {/* Summary */}
+            <Block title="Structural Summary" icon={
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+              </svg>
+            }>
+              <p style={{ padding: '16px 20px', fontSize: 14, lineHeight: 1.8, color: 'var(--text)' }}>
+                {result.summary}
+              </p>
+            </Block>
 
-          {/* Error */}
-          {error && (
-            <SectionCard>
-              <SectionTitle icon={<IconWarn />} color="#ffcb9a">Analysis Failed</SectionTitle>
-              <div className="px-5 py-4">
-                <p className="text-sm text-[#d1e8e2]">
-                  <span className="text-[#ffcb9a] font-semibold">Error: </span>
-                  <span className="font-mono text-xs">{error}</span>
-                </p>
-                <p className="mt-2 text-xs text-[#d1e8e2] opacity-60">
-                  Check that <code className="text-[#d9b08c]">VITE_GROQ_API_KEY</code> is set in your{' '}
-                  <code className="text-[#d9b08c]">.env</code> file.
-                </p>
-              </div>
-            </SectionCard>
-          )}
-
-          {/* Result */}
-          {result && (
-            <>
-              {/* Summary */}
-              <SectionCard>
-                <SectionTitle icon={<IconInfo />}>Structural Summary</SectionTitle>
-                <p className="px-5 py-4 text-sm text-[#d1e8e2] leading-relaxed">{result.summary}</p>
-              </SectionCard>
-
-              {/* Wall explanations */}
-              <SectionCard>
-                <SectionTitle icon={<IconWall />} color="#d1e8e2">Wall-by-Wall Explanation</SectionTitle>
-                <div className="divide-y divide-[#116466]/40">
-                  {result.wallExplanations?.map((item, i) => {
-                    const ctxWall = context.wallSummaries.find(w => w.label === item.label) || context.wallSummaries[i]
-                    const isLB = ctxWall?.type === 'Load-Bearing'
-                    return (
-                      <div key={i} className="px-5 py-4">
-                        <div className="flex flex-wrap items-center gap-2 mb-3">
-                          <span
-                            className="w-7 h-7 rounded-lg flex items-center justify-center text-[11px] font-bold border"
-                            style={{
-                              backgroundColor: isLB ? 'rgba(17,100,102,0.4)' : 'rgba(17,100,102,0.15)',
-                              color: isLB ? '#ffcb9a' : '#d1e8e2',
-                              borderColor: '#116466'
-                            }}
-                          >
-                            {String(i + 1).padStart(2, '0')}
-                          </span>
-                          <strong className="text-sm text-[#ffcb9a]">{item.label}</strong>
-                          <Badge type={isLB ? 'lb' : 'partition'}>{ctxWall?.type || 'Wall'}</Badge>
-                          {ctxWall?.topMaterial && <Badge type="material">→ {ctxWall.topMaterial}</Badge>}
-                        </div>
-                        <div className="pl-9 flex flex-col gap-2">
-                          <p className="text-xs text-[#d1e8e2] leading-relaxed">
-                            <span className="text-[10px] uppercase tracking-widest font-bold text-[#d9b08c] mr-1">Why:</span>
-                            {item.why}
-                          </p>
-                          <p className="text-xs text-[#d1e8e2] leading-relaxed">
-                            <span className="text-[10px] uppercase tracking-widest font-bold text-[#d9b08c] mr-1">Trade-off:</span>
-                            {item.tradeoff}
-                          </p>
-                        </div>
+            {/* Wall explanations */}
+            <Block title="Wall-by-Wall Breakdown" icon={
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <rect x="3" y="3" width="18" height="18" rx="2"/>
+                <line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/>
+              </svg>
+            } color="var(--text)">
+              <div>
+                {result.wallExplanations?.map((item, i) => {
+                  const ctxWall = context.wallSummaries.find(w => w.label === item.label) || context.wallSummaries[i]
+                  const isLB = ctxWall?.type === 'Load-Bearing'
+                  return (
+                    <div key={i} style={{ padding: '16px 20px', borderBottom: i < result.wallExplanations.length - 1 ? '1px solid rgba(30,48,80,0.5)' : 'none' }}>
+                      <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 8, marginBottom: 10 }}>
+                        <span style={{
+                          width: 28, height: 28, borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center',
+                          fontSize: 11, fontFamily: 'Outfit, sans-serif', fontWeight: 800,
+                          background: isLB ? 'rgba(17,100,102,0.35)' : 'rgba(17,100,102,0.12)',
+                          color: isLB ? 'var(--cyan)' : 'var(--text-muted)',
+                          border: `1px solid ${isLB ? 'rgba(17,100,102,0.6)' : 'var(--border)'}`,
+                          flexShrink: 0,
+                        }}>
+                          {String(i + 1).padStart(2, '0')}
+                        </span>
+                        <strong style={{ fontSize: 13, color: 'var(--gold)', fontFamily: 'Outfit, sans-serif' }}>
+                          {item.label}
+                        </strong>
+                        <span className={`tag ${isLB ? 'tag-load' : 'tag-muted'}`}>{ctxWall?.type || 'Wall'}</span>
+                        {ctxWall?.topMaterial && (
+                          <span className="tag tag-teal">→ {ctxWall.topMaterial}</span>
+                        )}
                       </div>
-                    )
-                  })}
+                      <div style={{ paddingLeft: 36, display: 'flex', flexDirection: 'column', gap: 6 }}>
+                        <p style={{ fontSize: 12, color: 'var(--text)', lineHeight: 1.7, margin: 0 }}>
+                          <span style={{ fontSize: 9, textTransform: 'uppercase', letterSpacing: '0.14em', fontFamily: 'Outfit, sans-serif', fontWeight: 700, color: 'var(--gold-dim)', marginRight: 6 }}>Why</span>
+                          {item.why}
+                        </p>
+                        <p style={{ fontSize: 12, color: 'var(--text-muted)', lineHeight: 1.7, margin: 0 }}>
+                          <span style={{ fontSize: 9, textTransform: 'uppercase', letterSpacing: '0.14em', fontFamily: 'Outfit, sans-serif', fontWeight: 700, color: 'var(--text-muted)', marginRight: 6 }}>Trade-off</span>
+                          {item.tradeoff}
+                        </p>
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            </Block>
+
+            {/* Structural concerns */}
+            {result.structuralConcerns?.length > 0 ? (
+              <Block title="Structural Concerns" icon={
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+                  <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+                </svg>
+              } color="#fb923c">
+                <ul style={{ listStyle: 'none', padding: '12px 20px', margin: 0, display: 'flex', flexDirection: 'column', gap: 8 }}>
+                  {result.structuralConcerns.map((c, i) => (
+                    <li key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 10, fontSize: 13, color: 'var(--text)', lineHeight: 1.6 }}>
+                      <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#fb923c', flexShrink: 0, marginTop: 6 }} />
+                      {c}
+                    </li>
+                  ))}
+                </ul>
+              </Block>
+            ) : (
+              <Block title="No Structural Concerns" icon={
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
+              } color="var(--teal-light)">
+                <p style={{ padding: '12px 20px', fontSize: 12, color: 'var(--text-muted)' }}>
+                  All detected spans are within safe limits for the selected materials.
+                </p>
+              </Block>
+            )}
+
+            {/* Overall recommendation */}
+            <Block title="Overall Recommendation" icon={
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+              </svg>
+            }>
+              <p style={{ padding: '16px 20px', fontSize: 14, lineHeight: 1.8, color: 'var(--text)' }}>
+                {result.overallRecommendation}
+              </p>
+            </Block>
+
+            {/* Rooms */}
+            {context.rooms.length > 0 && (
+              <Block title={`Room Layout · ${context.rooms.length} rooms`} icon={
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
+                  <polyline points="9 22 9 12 15 12 15 22"/>
+                </svg>
+              } color="var(--text-muted)">
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, padding: '14px 20px' }}>
+                  {context.rooms.map((room, i) => (
+                    <span key={i} className="tag tag-teal">{room.name}</span>
+                  ))}
                 </div>
-              </SectionCard>
+              </Block>
+            )}
+          </>
+        )}
 
-              {/* Structural concerns */}
-              {result.structuralConcerns?.length > 0 ? (
-                <SectionCard>
-                  <SectionTitle icon={<IconWarn />} color="#ffcb9a">Structural Concerns</SectionTitle>
-                  <ul className="px-5 py-4 flex flex-col gap-2">
-                    {result.structuralConcerns.map((c, i) => (
-                      <li key={i} className="flex items-start gap-2 text-sm text-[#d1e8e2]">
-                        <span className="mt-1 w-2 h-2 rounded-full bg-[#ffcb9a] shrink-0" />
-                        {c}
-                      </li>
-                    ))}
-                  </ul>
-                </SectionCard>
-              ) : (
-                <SectionCard>
-                  <SectionTitle icon={<IconCheck />} color="#d1e8e2">No Structural Concerns Detected</SectionTitle>
-                  <p className="px-5 py-4 text-xs text-[#d1e8e2] opacity-70">
-                    All detected spans are within safe limits for the selected materials.
-                  </p>
-                </SectionCard>
-              )}
-
-              {/* Overall recommendation */}
-              <SectionCard>
-                <SectionTitle icon={<IconStar />} color="#d9b08c">Overall Recommendation</SectionTitle>
-                <p className="px-5 py-4 text-sm text-[#d1e8e2] leading-relaxed">{result.overallRecommendation}</p>
-              </SectionCard>
-
-              {/* Rooms */}
-              {context.rooms.length > 0 && (
-                <SectionCard>
-                  <SectionTitle icon={<IconHome />}>Room Layout ({context.rooms.length} rooms)</SectionTitle>
-                  <div className="px-5 py-4 flex flex-wrap gap-2">
-                    {context.rooms.map((room, i) => (
-                      <span
-                        key={i}
-                        className="px-3 py-1 rounded-full text-xs border border-[#116466] text-[#d1e8e2] font-mono"
-                        style={{ backgroundColor: 'rgba(17,100,102,0.2)' }}
-                      >
-                        {room.name}
-                      </span>
-                    ))}
-                  </div>
-                </SectionCard>
-              )}
-            </>
-          )}
-
-        </div>
-      </section>
-    </>
+      </div>
+    </section>
   )
 }
 
