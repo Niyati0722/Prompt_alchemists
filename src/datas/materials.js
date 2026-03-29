@@ -1,5 +1,4 @@
 const materials = [
-  // Your existing entries...
   {
     name: "AAC Blocks",
     cost: "Low",
@@ -77,7 +76,6 @@ const materials = [
     bestUse: "Structural walls, slabs",
     type: "structural"
   },
-  // New additions
   {
     name: "Cross-Laminated Timber (CLT)",
     cost: "High",
@@ -154,6 +152,536 @@ const materials = [
     durabilityScore: 3,
     bestUse: "Beams, headers, framing",
     type: "structural"
+  },
+
+  // Added materials
+  {
+    name: "Clay Brick",
+    cost: "Medium",
+    costScore: 2,
+    strength: "High",
+    strengthScore: 3,
+    durability: "High",
+    durabilityScore: 3,
+    bestUse: "Walls, facades",
+    type: "general"
+  },
+  {
+    name: "Concrete Brick",
+    cost: "Low-Med",
+    costScore: 1.5,
+    strength: "High",
+    strengthScore: 3,
+    durability: "High",
+    durabilityScore: 3,
+    bestUse: "Walls, pavements",
+    type: "general"
+  },
+  {
+    name: "Laterite Stone",
+    cost: "Low",
+    costScore: 1,
+    strength: "Medium",
+    strengthScore: 2,
+    durability: "Medium",
+    durabilityScore: 2,
+    bestUse: "Rural walling",
+    type: "loadbearing"
+  },
+  {
+    name: "Granite",
+    cost: "High",
+    costScore: 3,
+    strength: "Very High",
+    strengthScore: 4,
+    durability: "Very High",
+    durabilityScore: 4,
+    bestUse: "Flooring, cladding, countertops",
+    type: "finish"
+  },
+  {
+    name: "Marble",
+    cost: "High",
+    costScore: 3,
+    strength: "Medium",
+    strengthScore: 2,
+    durability: "High",
+    durabilityScore: 3,
+    bestUse: "Flooring, decorative finishes",
+    type: "finish"
+  },
+  {
+    name: "Sandstone",
+    cost: "Medium",
+    costScore: 2,
+    strength: "Medium",
+    strengthScore: 2,
+    durability: "Medium-High",
+    durabilityScore: 2.5,
+    bestUse: "Cladding, paving",
+    type: "cladding"
+  },
+  {
+    name: "Limestone",
+    cost: "Medium",
+    costScore: 2,
+    strength: "Medium",
+    strengthScore: 2,
+    durability: "Medium",
+    durabilityScore: 2,
+    bestUse: "Wall cladding, flooring",
+    type: "finish"
+  },
+  {
+    name: "Slate",
+    cost: "Medium-High",
+    costScore: 2.5,
+    strength: "Medium-High",
+    strengthScore: 2.5,
+    durability: "High",
+    durabilityScore: 3,
+    bestUse: "Roofing, flooring",
+    type: "roofing"
+  },
+  {
+    name: "Cement Mortar",
+    cost: "Low",
+    costScore: 1,
+    strength: "Medium",
+    strengthScore: 2,
+    durability: "Medium-High",
+    durabilityScore: 2.5,
+    bestUse: "Masonry joints, plastering",
+    type: "binding"
+  },
+  {
+    name: "Lime Mortar",
+    cost: "Low-Med",
+    costScore: 1.5,
+    strength: "Low-Medium",
+    strengthScore: 1.5,
+    durability: "Medium",
+    durabilityScore: 2,
+    bestUse: "Restoration, breathable walls",
+    type: "binding"
+  },
+  {
+    name: "Plaster of Paris (POP)",
+    cost: "Low",
+    costScore: 1,
+    strength: "Low",
+    strengthScore: 1,
+    durability: "Medium",
+    durabilityScore: 2,
+    bestUse: "False ceilings, decorative work",
+    type: "finish"
+  },
+  {
+    name: "Gypsum Board",
+    cost: "Low-Med",
+    costScore: 1.5,
+    strength: "Low-Medium",
+    strengthScore: 1.5,
+    durability: "Medium",
+    durabilityScore: 2,
+    bestUse: "Drywalls, ceilings",
+    type: "partition"
+  },
+  {
+    name: "Calcium Silicate Board",
+    cost: "Medium",
+    costScore: 2,
+    strength: "Medium",
+    strengthScore: 2,
+    durability: "High",
+    durabilityScore: 3,
+    bestUse: "Ceilings, fire-rated partitions",
+    type: "partition"
+  },
+  {
+    name: "Plywood",
+    cost: "Medium",
+    costScore: 2,
+    strength: "Medium-High",
+    strengthScore: 2.5,
+    durability: "Medium",
+    durabilityScore: 2,
+    bestUse: "Furniture, paneling, shuttering",
+    type: "finish"
+  },
+  {
+    name: "MDF Board",
+    cost: "Low-Med",
+    costScore: 1.5,
+    strength: "Low-Medium",
+    strengthScore: 1.5,
+    durability: "Low-Medium",
+    durabilityScore: 1.5,
+    bestUse: "Interior furniture, panels",
+    type: "finish"
+  },
+  {
+    name: "Particle Board",
+    cost: "Low",
+    costScore: 1,
+    strength: "Low",
+    strengthScore: 1,
+    durability: "Low",
+    durabilityScore: 1,
+    bestUse: "Budget furniture, partitions",
+    type: "finish"
+  },
+  {
+    name: "Bamboo",
+    cost: "Low-Med",
+    costScore: 1.5,
+    strength: "Medium-High",
+    strengthScore: 2.5,
+    durability: "Medium",
+    durabilityScore: 2,
+    bestUse: "Eco-friendly framing, screens",
+    type: "structural"
+  },
+  {
+    name: "Timber",
+    cost: "Medium",
+    costScore: 2,
+    strength: "Medium-High",
+    strengthScore: 2.5,
+    durability: "Medium",
+    durabilityScore: 2,
+    bestUse: "Doors, windows, roof framing",
+    type: "general"
+  },
+  {
+    name: "Aluminum Frame",
+    cost: "Medium-High",
+    costScore: 2.5,
+    strength: "Medium",
+    strengthScore: 2,
+    durability: "High",
+    durabilityScore: 3,
+    bestUse: "Windows, curtain walls",
+    type: "enclosure"
+  },
+  {
+    name: "UPVC",
+    cost: "Medium",
+    costScore: 2,
+    strength: "Low-Medium",
+    strengthScore: 1.5,
+    durability: "High",
+    durabilityScore: 3,
+    bestUse: "Window and door frames",
+    type: "enclosure"
+  },
+  {
+    name: "Tempered Glass",
+    cost: "High",
+    costScore: 3,
+    strength: "Medium-High",
+    strengthScore: 2.5,
+    durability: "High",
+    durabilityScore: 3,
+    bestUse: "Windows, facades, partitions",
+    type: "enclosure"
+  },
+  {
+    name: "Laminated Glass",
+    cost: "High",
+    costScore: 3,
+    strength: "Medium-High",
+    strengthScore: 2.5,
+    durability: "High",
+    durabilityScore: 3,
+    bestUse: "Safety glazing, facades",
+    type: "enclosure"
+  },
+  {
+    name: "Polycarbonate Sheet",
+    cost: "Medium",
+    costScore: 2,
+    strength: "Medium",
+    strengthScore: 2,
+    durability: "Medium-High",
+    durabilityScore: 2.5,
+    bestUse: "Skylights, roofing",
+    type: "roofing"
+  },
+  {
+    name: "Asphalt Shingles",
+    cost: "Low-Med",
+    costScore: 1.5,
+    strength: "Low-Medium",
+    strengthScore: 1.5,
+    durability: "Medium",
+    durabilityScore: 2,
+    bestUse: "Sloped roofing",
+    type: "roofing"
+  },
+  {
+    name: "Clay Roof Tile",
+    cost: "Medium",
+    costScore: 2,
+    strength: "Medium",
+    strengthScore: 2,
+    durability: "High",
+    durabilityScore: 3,
+    bestUse: "Residential roofing",
+    type: "roofing"
+  },
+  {
+    name: "Concrete Roof Tile",
+    cost: "Medium",
+    costScore: 2,
+    strength: "Medium-High",
+    strengthScore: 2.5,
+    durability: "High",
+    durabilityScore: 3,
+    bestUse: "Durable roof covering",
+    type: "roofing"
+  },
+  {
+    name: "Corrugated GI Sheet",
+    cost: "Low-Med",
+    costScore: 1.5,
+    strength: "Medium",
+    strengthScore: 2,
+    durability: "Medium",
+    durabilityScore: 2,
+    bestUse: "Industrial roofing, sheds",
+    type: "roofing"
+  },
+  {
+    name: "Zinc Roofing Sheet",
+    cost: "Medium",
+    costScore: 2,
+    strength: "Medium",
+    strengthScore: 2,
+    durability: "High",
+    durabilityScore: 3,
+    bestUse: "Long-lasting roofing",
+    type: "roofing"
+  },
+  {
+    name: "Ceramic Tile",
+    cost: "Low-Med",
+    costScore: 1.5,
+    strength: "Medium",
+    strengthScore: 2,
+    durability: "High",
+    durabilityScore: 3,
+    bestUse: "Flooring, wall finishes",
+    type: "finish"
+  },
+  {
+    name: "Vitrified Tile",
+    cost: "Medium",
+    costScore: 2,
+    strength: "High",
+    strengthScore: 3,
+    durability: "Very High",
+    durabilityScore: 4,
+    bestUse: "Premium flooring",
+    type: "finish"
+  },
+  {
+    name: "Porcelain Tile",
+    cost: "Medium-High",
+    costScore: 2.5,
+    strength: "High",
+    strengthScore: 3,
+    durability: "Very High",
+    durabilityScore: 4,
+    bestUse: "Heavy-duty flooring, wall cladding",
+    type: "finish"
+  },
+  {
+    name: "Vinyl Flooring",
+    cost: "Low-Med",
+    costScore: 1.5,
+    strength: "Low-Medium",
+    strengthScore: 1.5,
+    durability: "Medium",
+    durabilityScore: 2,
+    bestUse: "Interior flooring",
+    type: "finish"
+  },
+  {
+    name: "Epoxy Flooring",
+    cost: "Medium-High",
+    costScore: 2.5,
+    strength: "High",
+    strengthScore: 3,
+    durability: "Very High",
+    durabilityScore: 4,
+    bestUse: "Industrial floors, garages",
+    type: "finish"
+  },
+  {
+    name: "Terrazzo",
+    cost: "High",
+    costScore: 3,
+    strength: "High",
+    strengthScore: 3,
+    durability: "Very High",
+    durabilityScore: 4,
+    bestUse: "Institutional flooring",
+    type: "finish"
+  },
+  {
+    name: "Bituminous Membrane",
+    cost: "Medium",
+    costScore: 2,
+    strength: "Low-Medium",
+    strengthScore: 1.5,
+    durability: "High",
+    durabilityScore: 3,
+    bestUse: "Roof waterproofing",
+    type: "waterproofing"
+  },
+  {
+    name: "Liquid Waterproofing Membrane",
+    cost: "Medium",
+    costScore: 2,
+    strength: "Low-Medium",
+    strengthScore: 1.5,
+    durability: "High",
+    durabilityScore: 3,
+    bestUse: "Bathrooms, terraces",
+    type: "waterproofing"
+  },
+  {
+    name: "XPS Insulation Board",
+    cost: "Medium",
+    costScore: 2,
+    strength: "Low-Medium",
+    strengthScore: 1.5,
+    durability: "High",
+    durabilityScore: 3,
+    bestUse: "Wall and roof insulation",
+    type: "insulation"
+  },
+  {
+    name: "EPS Insulation Board",
+    cost: "Low-Med",
+    costScore: 1.5,
+    strength: "Low",
+    strengthScore: 1,
+    durability: "Medium-High",
+    durabilityScore: 2.5,
+    bestUse: "Thermal insulation",
+    type: "insulation"
+  },
+  {
+    name: "Rock Wool",
+    cost: "Medium",
+    costScore: 2,
+    strength: "Low",
+    strengthScore: 1,
+    durability: "High",
+    durabilityScore: 3,
+    bestUse: "Acoustic and thermal insulation",
+    type: "insulation"
+  },
+  {
+    name: "Glass Wool",
+    cost: "Low-Med",
+    costScore: 1.5,
+    strength: "Low",
+    strengthScore: 1,
+    durability: "Medium",
+    durabilityScore: 2,
+    bestUse: "Ceiling and wall insulation",
+    type: "insulation"
+  },
+  {
+    name: "Rebar Steel",
+    cost: "Medium-High",
+    costScore: 2.5,
+    strength: "Very High",
+    strengthScore: 4,
+    durability: "High",
+    durabilityScore: 3,
+    bestUse: "Reinforcement in concrete",
+    type: "structural"
+  },
+  {
+    name: "Prestressed Concrete",
+    cost: "High",
+    costScore: 3,
+    strength: "Very High",
+    strengthScore: 4,
+    durability: "Very High",
+    durabilityScore: 4,
+    bestUse: "Bridges, long-span slabs, beams",
+    type: "structural"
+  },
+  {
+    name: "FRP Panel",
+    cost: "Medium-High",
+    costScore: 2.5,
+    strength: "Medium-High",
+    strengthScore: 2.5,
+    durability: "Very High",
+    durabilityScore: 4,
+    bestUse: "Cladding, lightweight panels",
+    type: "cladding"
+  },
+  {
+    name: "WPC Board",
+    cost: "Medium",
+    costScore: 2,
+    strength: "Medium",
+    strengthScore: 2,
+    durability: "High",
+    durabilityScore: 3,
+    bestUse: "Outdoor decking, partitions",
+    type: "finish"
+  },
+  {
+    name: "Fibre Cement Board",
+    cost: "Medium",
+    costScore: 2,
+    strength: "Medium",
+    strengthScore: 2,
+    durability: "High",
+    durabilityScore: 3,
+    bestUse: "Exterior cladding, partitions",
+    type: "cladding"
+  },
+  {
+    name: "Corten Steel",
+    cost: "High",
+    costScore: 3,
+    strength: "High",
+    strengthScore: 3,
+    durability: "Very High",
+    durabilityScore: 4,
+    bestUse: "Architectural facades, structures",
+    type: "cladding"
+  },
+  {
+    name: "PVC Pipe Material",
+    cost: "Low",
+    costScore: 1,
+    strength: "Low-Medium",
+    strengthScore: 1.5,
+    durability: "High",
+    durabilityScore: 3,
+    bestUse: "Drainage and plumbing systems",
+    type: "services"
+  },
+  {
+    name: "HDPE",
+    cost: "Medium",
+    costScore: 2,
+    strength: "Medium",
+    strengthScore: 2,
+    durability: "Very High",
+    durabilityScore: 4,
+    bestUse: "Underground piping, tanks",
+    type: "services"
   }
 ]
 
