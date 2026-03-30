@@ -1,7 +1,7 @@
 import materials from '../datas/materials.js'
 import plans from '../datas/Plans.js'
 
-/* ── Scoring / classification (unchanged logic) ── */
+/* ── Scoring logic — UNCHANGED ── */
 const getScore = (material, isLoadBearing) => {
   if (isLoadBearing) {
     return (material.strengthScore * 0.6) + (material.durabilityScore * 0.3) - (material.costScore * 0.1)
@@ -45,47 +45,31 @@ const getWallLabel = (wall, index, allWalls) => {
   return `Inner Wall ${index + 1}`
 }
 
-/* ── Rank colors ── */
-const rankClass = ['rank-1', 'rank-2', 'rank-3']
-
 /* ── Score bar ── */
-const ScoreBar = ({ value, max = 10 }) => {
-  const pct = Math.min((value / max) * 100, 100)
-  return (
-    <div style={{ height: 4, background: 'rgba(17,100,102,0.2)', borderRadius: 2, overflow: 'hidden', width: 60 }}>
-      <div style={{
-        height: '100%', width: `${pct}%`,
-        background: 'linear-gradient(90deg, var(--teal), var(--cyan))',
-        borderRadius: 2,
-        transition: 'width 0.6s ease',
-      }} />
+const ScoreBar = ({ value, max = 10 }) => (
+  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+    <div className="score-bar-track">
+      <div className="score-bar-fill" style={{ width: `${Math.min(value / max * 100, 100)}%` }} />
     </div>
-  )
-}
+    <span style={{ fontSize: 11, fontFamily: 'JetBrains Mono, monospace', color: 'var(--text-3)' }}>{value}/10</span>
+  </div>
+)
 
 const MaterialTable = ({ walls, plan }) => {
   if (!walls || walls.length === 0) {
     return (
-      <section id="materials" className="glass rounded-2xl overflow-hidden mb-6">
-        <div className="px-8 py-5 flex items-center gap-4" style={{ borderBottom: '1px solid var(--border)' }}>
-          <div className="w-9 h-9 rounded-xl flex items-center justify-center"
-            style={{ background: 'rgba(17,100,102,0.15)', border: '1px solid rgba(17,100,102,0.3)' }}>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--teal-light)" strokeWidth="2">
-              <rect x="3" y="3" width="18" height="18" rx="2"/>
-              <line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/>
-            </svg>
-          </div>
+      <section id="materials" className="glass-card" style={{ marginBottom: 24, overflow: 'hidden' }}>
+        <div style={{ padding: '22px 32px', borderBottom: '1px solid var(--glass-border)', display: 'flex', alignItems: 'center', gap: 12 }}>
+          <div className="sec-num">3</div>
           <div>
-            <div className="section-label">Step 3</div>
-            <h2 style={{ fontFamily: 'Outfit, sans-serif', fontWeight: 700, fontSize: 20, color: 'var(--gold)', margin: 0 }}>
-              Material Recommendations
-            </h2>
+            <div className="sec-label">Step Three</div>
+            <h2 style={{ fontFamily: 'Poppins, sans-serif', fontWeight: 800, fontSize: 20, color: 'var(--text)', margin: 0 }}>Material Recommendations</h2>
           </div>
         </div>
-        <div className="flex flex-col items-center justify-center py-14 gap-3">
-          <div style={{ fontSize: 28, color: 'var(--text-dim)' }}>⬡</div>
-          <p style={{ fontSize: 12, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--text-dim)', fontFamily: 'Outfit, sans-serif' }}>
-            Awaiting floor plan analysis
+        <div style={{ padding: '60px 0', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}>
+          <div style={{ fontSize: 34, opacity: 0.12 }}>◈</div>
+          <p style={{ fontSize: 12, letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--text-3)', fontFamily: 'JetBrains Mono, monospace' }}>
+            Awaiting analysis
           </p>
         </div>
       </section>
@@ -95,60 +79,55 @@ const MaterialTable = ({ walls, plan }) => {
   const rooms = plan ? plans[plan]?.rooms : []
 
   return (
-    <section id="materials" className="glass rounded-2xl overflow-hidden mb-6 animate-fadeIn">
+    <section id="materials" className="glass-card anim-fadeIn" style={{ marginBottom: 24, overflow: 'hidden', fontFamily: "'Inter', sans-serif" }}>
       {/* Header */}
-      <div className="px-8 py-5 flex items-center justify-between"
-        style={{ borderBottom: '1px solid var(--border)' }}>
-        <div className="flex items-center gap-4">
-          <div className="w-9 h-9 rounded-xl flex items-center justify-center"
-            style={{ background: 'rgba(17,100,102,0.2)', border: '1px solid rgba(17,100,102,0.4)' }}>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" strokeWidth="2">
-              <rect x="3" y="3" width="18" height="18" rx="2"/>
-              <line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/>
-            </svg>
-          </div>
+      <div style={{ padding: '22px 32px', borderBottom: '1px solid var(--glass-border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <div className="sec-num" style={{ background: 'linear-gradient(135deg, #2563eb, #7c3aed)', boxShadow: '0 0 16px rgba(99,102,241,0.4)' }}>3</div>
           <div>
-            <div className="section-label">Step 3</div>
-            <h2 style={{ fontFamily: 'Outfit, sans-serif', fontWeight: 700, fontSize: 20, color: 'var(--gold)', margin: 0 }}>
-              Material Recommendations
-            </h2>
+            <div className="sec-label">Step Three</div>
+            <h2 style={{ fontFamily: 'Poppins, sans-serif', fontWeight: 800, fontSize: 20, color: 'var(--text)', margin: 0 }}>Material Recommendations</h2>
           </div>
         </div>
-        <span style={{ fontSize: 12, color: 'var(--text-muted)', fontFamily: 'DM Mono, monospace' }}>
-          Top 3 per wall · scored by suitability
+        <span style={{ fontSize: 12, color: 'var(--text-3)', fontFamily: 'JetBrains Mono, monospace' }}>
+          Scored by structural suitability
         </span>
       </div>
 
-      <div className="px-8 py-8 flex flex-col gap-6">
+      <div style={{ padding: '28px 32px', display: 'flex', flexDirection: 'column', gap: 20 }}>
         {walls.map((wall, index) => {
-          const lb        = isLoadBearing(wall, walls)
-          const topMats   = getTopMaterials(wall, walls)
-          const label     = getWallLabel(wall, index, walls)
-
+          const lb     = isLoadBearing(wall, walls)
+          const top    = getTopMaterials(wall, walls)
+          const label  = getWallLabel(wall, index, walls)
           return (
-            <div key={index} className="card-inset overflow-hidden">
-              {/* Wall sub-header */}
-              <div className="flex items-center gap-3 px-5 py-3" style={{ borderBottom: '1px solid var(--border)', background: 'rgba(17,100,102,0.07)' }}>
-                <span className="w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold"
-                  style={{
-                    fontFamily: 'Outfit, sans-serif',
-                    background: lb ? 'rgba(17,100,102,0.35)' : 'rgba(17,100,102,0.12)',
-                    color: lb ? 'var(--cyan)' : 'var(--text-muted)',
-                    border: `1px solid ${lb ? 'rgba(17,100,102,0.6)' : 'var(--border)'}`,
-                  }}>
+            <div key={index} className="glass-inset" style={{ overflow: 'hidden', transition: 'border-color 0.3s' }}>
+              {/* Wall header */}
+              <div style={{
+                padding: '12px 20px', display: 'flex', alignItems: 'center', gap: 10,
+                borderBottom: '1px solid var(--glass-border)',
+                background: 'rgba(15,23,42,0.4)',
+              }}>
+                <span style={{
+                  width: 30, height: 30, borderRadius: 8,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  fontSize: 11, fontWeight: 800,
+                  background: lb ? 'linear-gradient(135deg, #1d4ed8, #6d28d9)' : 'rgba(255,255,255,0.05)',
+                  color: lb ? 'white' : 'var(--text-3)',
+                  border: `1px solid ${lb ? 'rgba(99,102,241,0.5)' : 'var(--border)'}`,
+                  boxShadow: lb ? '0 0 12px rgba(99,102,241,0.3)' : 'none',
+                  fontFamily: 'JetBrains Mono, monospace',
+                }}>
                   {String(index + 1).padStart(2, '0')}
                 </span>
-                <h4 style={{ fontFamily: 'Outfit, sans-serif', fontWeight: 600, fontSize: 14, color: 'var(--text)', margin: 0 }}>
-                  {label}
-                </h4>
-                <span className={`tag ${lb ? 'tag-load' : 'tag-muted'}`} style={{ marginLeft: 4 }}>
+                <span style={{ fontSize: 14, fontWeight: 600, color: 'var(--text)' }}>{label}</span>
+                <span className={`badge ${lb ? 'badge-purple' : 'badge-blue'}`} style={{ marginLeft: 4 }}>
                   {lb ? 'Load-Bearing' : 'Partition'}
                 </span>
               </div>
 
-              {/* Material rows */}
-              <div className="overflow-x-auto">
-                <table className="styled">
+              {/* Table */}
+              <div style={{ overflowX: 'auto' }}>
+                <table className="dash-table">
                   <thead>
                     <tr>
                       {['Rank', 'Material', 'Cost', 'Strength', 'Durability', 'Score'].map(col => (
@@ -157,36 +136,23 @@ const MaterialTable = ({ walls, plan }) => {
                     </tr>
                   </thead>
                   <tbody>
-                    {topMats.map((m, i) => (
+                    {top.map((m, i) => (
                       <tr key={i}>
+                        <td><div className={`rank rank-${i+1}`}>{i + 1}</div></td>
                         <td>
-                          <div className={`rank-badge ${rankClass[i]}`}>{i + 1}</div>
-                        </td>
-                        <td>
-                          <span style={{ fontWeight: 600, color: i === 0 ? 'var(--gold)' : 'var(--text)', fontFamily: 'Outfit, sans-serif' }}>
+                          <span style={{ fontWeight: 600, color: i === 0 ? '#fbbf24' : 'var(--text)', fontSize: 13 }}>
                             {m.name}
                           </span>
                         </td>
-                        <td style={{ color: 'var(--text-muted)', fontSize: 12 }}>{m.cost}</td>
                         <td>
-                          <div className="flex items-center gap-2">
-                            <ScoreBar value={m.strengthScore} />
-                            <span style={{ fontSize: 11, color: 'var(--text-muted)', fontFamily: 'DM Mono, monospace' }}>{m.strength}</span>
-                          </div>
+                          <span className={`badge ${m.cost === 'Low' ? 'badge-green' : m.cost === 'High' ? 'badge-red' : 'badge-amber'}`} style={{ fontSize: 9 }}>
+                            {m.cost}
+                          </span>
                         </td>
+                        <td><ScoreBar value={m.strengthScore} /></td>
+                        <td><ScoreBar value={m.durabilityScore} /></td>
                         <td>
-                          <div className="flex items-center gap-2">
-                            <ScoreBar value={m.durabilityScore} />
-                            <span style={{ fontSize: 11, color: 'var(--text-muted)', fontFamily: 'DM Mono, monospace' }}>{m.durability}</span>
-                          </div>
-                        </td>
-                        <td>
-                          <span style={{
-                            fontFamily: 'DM Mono, monospace',
-                            fontWeight: 700,
-                            fontSize: 14,
-                            color: i === 0 ? 'var(--gold)' : 'var(--text-muted)',
-                          }}>
+                          <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 14, fontWeight: 700, color: i === 0 ? '#fbbf24' : 'var(--text-2)' }}>
                             {m.score.toFixed(2)}
                           </span>
                         </td>
@@ -199,26 +165,24 @@ const MaterialTable = ({ walls, plan }) => {
           )
         })}
 
-        {/* Rooms grid */}
+        {/* Rooms */}
         {rooms && rooms.length > 0 && (
-          <div className="card-inset overflow-hidden">
-            <div className="px-5 py-3 flex items-center gap-2" style={{ borderBottom: '1px solid var(--border)', background: 'rgba(17,100,102,0.07)' }}>
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--teal-light)" strokeWidth="2">
-                <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
+          <div className="glass-inset" style={{ overflow: 'hidden' }}>
+            <div style={{ padding: '12px 20px', borderBottom: '1px solid var(--glass-border)', background: 'rgba(15,23,42,0.4)', display: 'flex', alignItems: 'center', gap: 8 }}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" strokeWidth="2">
+                <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
+                <polyline points="9 22 9 12 15 12 15 22"/>
               </svg>
-              <h3 style={{ fontFamily: 'Outfit, sans-serif', fontWeight: 700, fontSize: 13, color: 'var(--gold)', margin: 0 }}>
+              <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--text)', letterSpacing: '0.05em' }}>
                 Room Layout
-              </h3>
-              <span style={{ marginLeft: 4, fontSize: 11, color: 'var(--text-muted)', fontFamily: 'DM Mono, monospace' }}>
+              </span>
+              <span style={{ fontSize: 11, fontFamily: 'JetBrains Mono, monospace', color: 'var(--text-3)', marginLeft: 4 }}>
                 {rooms.length} rooms
               </span>
             </div>
-            <div className="flex flex-wrap gap-2 px-5 py-4">
+            <div style={{ padding: '14px 20px', display: 'flex', flexWrap: 'wrap', gap: 8 }}>
               {rooms.map((room, i) => (
-                <span key={i} className="tag tag-teal" style={{ gap: 5 }}>
-                  <span style={{ fontSize: 8, opacity: 0.7 }}>⬡</span>
-                  {room.name}
-                </span>
+                <span key={i} className="badge badge-cyan">{room.name}</span>
               ))}
             </div>
           </div>
