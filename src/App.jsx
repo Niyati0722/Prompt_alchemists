@@ -5,11 +5,10 @@ import ThreeDViewer from './components/ThreeDViewer'
 import MaterialTable from './components/MaterialTable'
 import Explanation from './components/Explanation'
 import WallOverlay from './components/WallOverlay'
+import CostEstimator from './components/CostEstimator'
+import BlockchainButton from './components/BlockchainButton'
 import heroBg from './assets/hero.png'
 
-/* ══════════════════════════════════════
-   Scroll Reveal Hook
-══════════════════════════════════════ */
 const useReveal = () => {
   const ref = useRef(null)
   useEffect(() => {
@@ -21,9 +20,6 @@ const useReveal = () => {
   return ref
 }
 
-/* ══════════════════════════════════════
-   Hero Section
-══════════════════════════════════════ */
 const Hero = ({ onStart }) => {
   return (
     <div style={{
@@ -32,7 +28,6 @@ const Hero = ({ onStart }) => {
       display: 'flex', alignItems: 'center', justifyContent: 'center',
       overflow: 'hidden',
     }}>
-      {/* Background image */}
       <div style={{
         position: 'absolute', inset: 0, zIndex: 0,
         backgroundImage: `url(${heroBg})`,
@@ -42,7 +37,6 @@ const Hero = ({ onStart }) => {
         transform: 'scale(1.05)',
       }} />
 
-      {/* Gradient overlays */}
       <div style={{
         position: 'absolute', inset: 0, zIndex: 1,
         background: 'linear-gradient(180deg, rgba(9,14,26,0.3) 0%, rgba(15,23,42,0.7) 60%, rgba(15,23,42,1) 100%)',
@@ -53,13 +47,10 @@ const Hero = ({ onStart }) => {
         animation: 'drift 18s ease-in-out infinite',
       }} />
 
-      {/* Dot grid */}
       <div className="dot-grid" style={{ position: 'absolute', inset: 0, zIndex: 2, opacity: 0.3 }} />
 
-      {/* Content */}
       <div style={{ position: 'relative', zIndex: 10, textAlign: 'center', maxWidth: 740, padding: '0 28px' }}>
 
-        {/* Badge */}
         <div className="anim-fadeUp op0" style={{ animationDelay: '0.1s', marginBottom: 28 }}>
           <div style={{
             display: 'inline-flex', alignItems: 'center', gap: 8,
@@ -75,7 +66,6 @@ const Hero = ({ onStart }) => {
           </div>
         </div>
 
-        {/* Title */}
         <div className="anim-fadeUp op0" style={{ animationDelay: '0.22s' }}>
           <h1 style={{
             fontFamily: 'Poppins, sans-serif', fontWeight: 900,
@@ -90,7 +80,6 @@ const Hero = ({ onStart }) => {
           </h1>
         </div>
 
-        {/* Subtitle */}
         <div className="anim-fadeUp op0" style={{ animationDelay: '0.36s', marginBottom: 40 }}>
           <p style={{
             fontSize: 'clamp(15px, 2vw, 18px)', color: 'rgba(148,163,184,0.85)',
@@ -102,7 +91,6 @@ const Hero = ({ onStart }) => {
           </p>
         </div>
 
-        {/* CTA button + glass card */}
         <div className="anim-fadeUp op0" style={{ animationDelay: '0.5s', marginBottom: 56 }}>
           <div style={{
             display: 'inline-block',
@@ -122,7 +110,6 @@ const Hero = ({ onStart }) => {
           </div>
         </div>
 
-        {/* Feature pills */}
         <div className="anim-fadeUp op0" style={{ animationDelay: '0.65s', display: 'flex', flexWrap: 'wrap', gap: 12, justifyContent: 'center' }}>
           {[
             { icon: '⬡', label: 'Wall Detection', sub: 'OpenCV' },
@@ -146,7 +133,6 @@ const Hero = ({ onStart }) => {
           ))}
         </div>
 
-        {/* Scroll hint */}
         <div style={{ marginTop: 56, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6, opacity: 0.4 }}>
           <span style={{ fontSize: 10, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-3)', fontFamily: 'JetBrains Mono, monospace' }}>Scroll</span>
           <div style={{ width: 1, height: 36, background: 'linear-gradient(180deg, rgba(148,163,184,0.5), transparent)' }} />
@@ -156,9 +142,6 @@ const Hero = ({ onStart }) => {
   )
 }
 
-/* ══════════════════════════════════════
-   Wall Visualization Panel
-══════════════════════════════════════ */
 const WallVizPanel = ({ walls, imageSrc }) => {
   const ref = useReveal()
   if (!walls || !imageSrc) return null
@@ -194,9 +177,6 @@ const WallVizPanel = ({ walls, imageSrc }) => {
   )
 }
 
-/* ══════════════════════════════════════
-   Results header banner
-══════════════════════════════════════ */
 const ResultsBanner = ({ walls }) => {
   const ref = useReveal()
   if (!walls || walls.length === 0) return null
@@ -221,12 +201,8 @@ const ResultsBanner = ({ walls }) => {
   )
 }
 
-/* ══════════════════════════════════════
-   Footer
-══════════════════════════════════════ */
 const Footer = () => (
   <footer style={{ position: 'relative', overflow: 'hidden', marginTop: 40 }}>
-    {/* Background */}
     <div style={{
       position: 'absolute', inset: 0,
       backgroundImage: `url(${heroBg})`,
@@ -240,13 +216,10 @@ const Footer = () => (
     <div style={{ position: 'absolute', inset: 0 }} className="dot-grid" />
 
     <div style={{ position: 'relative', zIndex: 10 }}>
-      {/* Divider glow */}
       <div style={{ height: 1, background: 'linear-gradient(90deg, transparent, rgba(99,102,241,0.4), rgba(139,92,246,0.4), transparent)' }} />
 
       <div style={{ maxWidth: 1280, margin: '0 auto', padding: '48px 28px 36px' }}>
-        {/* Top row */}
         <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: 28, marginBottom: 36 }}>
-          {/* Brand */}
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
               <div style={{
@@ -265,7 +238,6 @@ const Footer = () => (
             </p>
           </div>
 
-          {/* Tech stack */}
           <div>
             <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-3)', marginBottom: 14, fontFamily: 'JetBrains Mono, monospace' }}>
               Stack
@@ -287,7 +259,6 @@ const Footer = () => (
             </div>
           </div>
 
-          {/* Tagline card */}
           <div style={{
             padding: '20px 24px', borderRadius: 14,
             background: 'rgba(59,130,246,0.06)', backdropFilter: 'blur(12px)',
@@ -304,7 +275,6 @@ const Footer = () => (
           </div>
         </div>
 
-        {/* Bottom bar */}
         <div style={{ borderTop: '1px solid rgba(30,58,95,0.4)', paddingTop: 20, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
           <span style={{ fontSize: 11, color: 'var(--text-3)', fontFamily: 'JetBrains Mono, monospace' }}>
             © 2025 Prompt Alchemists. Hackathon Project.
@@ -319,13 +289,10 @@ const Footer = () => (
   </footer>
 )
 
-/* ══════════════════════════════════════
-   APP
-══════════════════════════════════════ */
 const App = () => {
-  const [walls, setWalls]             = useState(null)
+  const [walls, setWalls]               = useState(null)
   const [selectedPlan, setSelectedPlan] = useState(null)
-  const [preview, setPreview]         = useState(null)
+  const [preview, setPreview]           = useState(null)
   const uploadRef = useRef(null)
 
   const handleStart = () => {
@@ -341,7 +308,6 @@ const App = () => {
 
   return (
     <div style={{ minHeight: '100vh', background: 'var(--bg)', fontFamily: "'Inter', sans-serif" }}>
-      {/* Global keyframes injected once */}
       <style>{`
         @keyframes hero-zoom { from{transform:scale(1)} to{transform:scale(1.06)} }
         @keyframes drift { 0%,100%{transform:translate(0,0)} 50%{transform:translate(20px,-15px)} }
@@ -355,13 +321,10 @@ const App = () => {
 
       <Header />
 
-      {/* Hero */}
       <Hero onStart={handleStart} />
 
-      {/* Main content */}
       <main style={{ maxWidth: 1280, margin: '0 auto', padding: '48px 28px 0' }}>
 
-        {/* Upload section anchor */}
         <div ref={uploadRef}>
           <UploadSection
             onWallsDetected={setWalls}
@@ -379,17 +342,21 @@ const App = () => {
 
         <ThreeDViewer walls={walls} />
         <MaterialTable walls={walls} plan={selectedPlan} />
+        <CostEstimator walls={walls} />
         <Explanation walls={walls} plan={selectedPlan} />
 
         {hasResults && (
-          <div style={{ textAlign: 'center', padding: '20px 0 48px' }}>
-            <button onClick={handleReset} className="btn btn-secondary" style={{ padding: '12px 28px', borderRadius: 10, fontSize: 13, gap: 8 }}>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/>
-              </svg>
-              Start New Analysis
-            </button>
-          </div>
+          <>
+            <BlockchainButton walls={walls} selectedPlan={selectedPlan} />
+            <div style={{ textAlign: 'center', padding: '20px 0 48px' }}>
+              <button onClick={handleReset} className="btn btn-secondary" style={{ padding: '12px 28px', borderRadius: 10, fontSize: 13, gap: 8 }}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/>
+                </svg>
+                Start New Analysis
+              </button>
+            </div>
+          </>
         )}
       </main>
 
